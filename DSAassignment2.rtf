@@ -1,0 +1,293 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+{\*\generator Riched20 10.0.19041}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\b\i\f0\fs22\lang9 NAME = Ishwari Sahebrao Jeughale\par
+RollNo = 23527\par
+branch = AIML\par
+LabAssignment2 :- STACK\par
+\b0\i0\par
+\par
+#include<stdlib.h>              //Header Files\par
+#include<iostream>\par
+#include<string.h>\par
+#define max 30                 //Max 30 characters\par
+using namespace std;\par
+struct node                    //Creation of node\par
+\{\par
+    char data;                 //value\par
+    struct node* next;         //Address of the next node\par
+\};\par
+class stack\par
+\{\par
+    node* top;\par
+    char x;                    //Top Value\par
+public:\par
+    stack()                    //constructor\par
+    \{\par
+        top = NULL;           //Stack kept empty initially\par
+    \}\par
+    int empty()\par
+    \{\par
+        if (top == NULL)        //Empty stack condition\par
+        \{\par
+            return(1);\par
+        \}\par
+        else                   //Stack not empty\par
+        \{\par
+            return(0);\par
+        \}\par
+    \}\par
+    void push(char x)       //Insert element into stack in the form of linked list\par
+    \{\par
+        node* p;\par
+        p = new node;\par
+        p->data = x;\par
+        p->next = top;\par
+        top = p;\par
+    \}\par
+    char pop()       //Deletion of a node\par
+    \{\par
+        if (!empty())\par
+        \{\par
+            node* p;\par
+            p = new node;      //top node\par
+            p = top;\par
+            top = top->next;    //Reaching to the top if stack contains multiple nodes\par
+            x = p->data;        //the value of top node gets stored into x\par
+            delete p;           //delete p i.e. top node\par
+            return(x);         //return the value of the deleted node\par
+        \}\par
+        else\par
+        \{\par
+            cout << "Stack is empty" << endl;\par
+            return(0);\par
+        \}\par
+    \}\par
+    char pop1()            //Used when there is only one element in the stack\par
+    \{\par
+        if (!empty())\par
+        \{\par
+            node* p;\par
+            p = new node;\par
+            p = top;\par
+            x = p->data;\par
+            return(x);\par
+        \}\par
+        else\par
+        \{\par
+            cout << "Stack is empty" << endl;\par
+            return(0);\par
+        \}\par
+    \}\par
+\};\par
+int precedence(char x);                                    //Operation 1: Check Precedence/Priority\par
+void infix_to_prefix(char infix[], char prefix[]);         //Operation 2: Infix to Prefix\par
+void infix_to_postfix(char infix[], char postfix[]);       //Operation 3: Infix to Postfix\par
+void eval_prefix(char prefix[]);                           //Operation 4: Evaluation of Prefix expression\par
+void eval_postfix(char postfix[]);                         //Operation 5: Evaluation of Postfix expression\par
+int evaluate(char x, int op1, int op2);                    //Operation 6: Evaluation of Basic Operation\par
+\par
+int main()                                                 //Main function\par
+\{\par
+    char infix[30], prefix[30], postfix[30];              //three arrays for stored expressions\par
+    int op;\par
+    do \{\par
+        cout << "\\n\\n\\nMenu:: \\n1.)Infix to Prefix with Evaluation \\n2.)Infix to Postfix with Evaluation \\n3.)Quit \\nEnter your choice: ";\par
+        cin >> op;\par
+\par
+        switch (op)                                   // switch case\par
+        \{\par
+        case 1:\par
+            cout << "\\nEnter the infix expression::" << endl;\par
+            cin >> infix;\par
+            infix_to_prefix(infix, prefix);                          //calls infix_to_prefix function\par
+            cout << "\\nPrefix expression is " << prefix << endl;\par
+            cout << "\\n\\nEvaluation of Prefix expression \\n";\par
+            eval_prefix(prefix);                                     //calls Evaluation of prefix function\par
+            break;\par
+        case 2:\par
+            cout << "\\nEnter the infix expression::" << endl;\par
+            cin >> infix;\par
+            infix_to_postfix(infix, postfix);                        //calls infix_to_postfix function\par
+            cout << "\\nPostfix expression is " << postfix << endl;\par
+            cout << "\\n\\nEvaluation of Postfix expression \\n";\par
+            eval_postfix(postfix);                                  //calls Evaluation of postfix function\par
+            break;\par
+        \}\par
+    \} while (op != 3);\par
+    return 0;\par
+\}\par
+void infix_to_prefix(char infix[], char prefix[])                 // prefix function\par
+\{\par
+    int i, j;                                                     //Variable declaration\par
+    char temp, in1[30];\par
+    cout << "\\n\\n After step 1 Entered infix is:";\par
+    for (i = 0; i <= strlen(infix) - 1; i++)                     //Reading the expression(0 to total strlen)\par
+    \{\par
+        cout << infix[i];\par
+    \}\par
+    for (i = strlen(infix) - 1, j = 0; i >= 0; i--, j++)        //Reversal of infix expression\par
+        in1[j] = infix[i];                                      //Storing your reversed array in in1[j]\par
+    in1[j] = '\\0';                                              //Ending the array with null value\par
+\par
+    cout << "\\n\\n After step 2:";                              //To make every '(' as ')' and ')' as '('\par
+    for (i = 0; i <= strlen(in1) - 1; i++)\par
+    \{\par
+        cout << in1[i];                                        //Traversing reverse string and stored into in1[]\par
+    \}\par
+\par
+    for (i = 0; in1[i] != '\\0'; i++)                           //After performing reverse, traverse 0 to'\\0'\par
+    \{\par
+        if (in1[i] == '(')\par
+            in1[i] = ')';                                     //If '(',then convert to ')'\par
+        else\par
+            if (in1[i] == ')')                               //If ')', then convert to '('\par
+                in1[i] = '(';\par
+    \}\par
+    cout << "\\n\\n After step 3:";\par
+    for (i = 0; i <= strlen(in1) - 1; i++)               //Storing the new expression after making the changes into int1[]\par
+    \{\par
+        cout << in1[i];\par
+    \}\par
+    cout << "\\n\\n After step 4:";                       //Print Final expressions\par
+    cout << "\\n\\n Prefix is:";\par
+    infix_to_postfix(in1, prefix);                     //calling the postfix function\par
+    for (i = 0, j = strlen(prefix) - 1; i < j; i++, j--)             //Reversing the postfix expression\par
+    \{\par
+        temp = prefix[i];                              //Perform Swapping functions\par
+        prefix[i] = prefix[j];\par
+        prefix[j] = temp;\par
+    \}\par
+\}\par
+\par
+\par
+\par
+void infix_to_postfix(char infix[], char postfix[])    //Infix to postfix function\par
+\{\par
+    stack s;                                          //Stack\par
+    node* top;                                        //top with address of next node\par
+    char x;                                           //Variable declaration\par
+    int i, j;\par
+    char token;                                       //Value stored in stacks\par
+    j = 0;\par
+    for (i = 0; infix[i] != '\\0'; i++)               //Traversing the infix expression\par
+    \{\par
+        token = infix[i];                           //Chars & Operators in infix exp gets stored into token\par
+        if (isalnum(token))                         //Check if the char present is string\par
+        \{\par
+            postfix[j++] = token;                  //Print into postfix[] & move to next location\par
+        \}\par
+        else if (token == '(')                    //Check If '(' operator present\par
+        \{\par
+            s.push('(');                          //push into stack\par
+        \}\par
+        else if (token == ')')                 //Check If ')' operator present\par
+        \{\par
+            while ((x = s.pop()) != '(')       //then pop Operators between '(' ')'\par
+            \{\par
+                postfix[j++] = x;             //Storing pop Operators into postfix[]\par
+            \}\par
+        \}\par
+        else\par
+        \{\par
+            x = s.pop1();                    //If only one element is present in stack, call pop1() function\par
+            while (precedence(token) < precedence(x) && !s.empty())        //token= operator in infix string, x= top of the stack\par
+            \{\par
+                x = s.pop();                  //If top of the stack has higher precedence operator  than pop\par
+                postfix[j++] = x;             //pop operator print into the output array\par
+            \}\par
+            s.push(token);                    //Lower precedence operator push into Stack\par
+        \}\par
+    \}\par
+    while (!s.empty())                     //If only one operator in Stack\par
+    \{\par
+        x = s.pop();                       //pop the operator\par
+        postfix[j++] = x;                  //print into postfix array\par
+    \}\par
+    postfix[j] = '\\0';                     //end of string\par
+\}\par
+\par
+\par
+int precedence(char x)                      //To check the precedence of operator\par
+\{\par
+    if (x == '(')\par
+    \{\par
+        return(0);\par
+    \}\par
+    if (x == '+' || x == '-')\par
+    \{\par
+        return(1);\par
+    \}\par
+    if (x == '*' || x == '/' || x == '%')\par
+    \{\par
+        return(2);\par
+    \}\par
+    return(3);\par
+\}\par
+\par
+void eval_prefix(char prefix[])                 //Evaluation of prefix string\par
+\{\par
+    stack s;\par
+    char x;\par
+    int op1, op2, val, i;                     //variable declaration\par
+    for (i = strlen(prefix) - 1; i >= 0; i--)         //Traversal of the string\par
+    \{\par
+        x = prefix[i];                             //Array of string gets stored into 'x'\par
+        if (isalpha(x))                            // If expression has char\par
+        \{\par
+            cout << "\\nEnter the value of " << x << ":";     //enter the values\par
+            cin >> val;                                     //read the value and store it in 'val'\par
+            s.push(val);                                    //Push value into stack\par
+        \}\par
+        else\par
+        \{\par
+            op1 = s.pop();                                 //Pop top operands in Stack\par
+            op2 = s.pop();\par
+            val = evaluate(x, op1, op2);                   //call evaluate func\par
+            s.push(val);                                   //push value into stack\par
+        \}\par
+    \}\par
+    val = s.pop();                                        //pop final values\par
+    cout << "\\nValue of expression is " << val;           //Print values\par
+\}\par
+\par
+void eval_postfix(char postfix[])\par
+\{\par
+    stack s;\par
+    char x;\par
+    int op1, op2, val, i;\par
+    for (i = 0; postfix[i] != '\\0'; i++)\par
+    \{\par
+        x = postfix[i];\par
+        if (isalpha(x))\par
+        \{\par
+            cout << "\\nEnter the value of " << x << ":";\par
+            cin >> val;\par
+            s.push(val);\par
+        \}\par
+        else\par
+        \{\par
+            op2 = s.pop();\par
+            op1 = s.pop();\par
+            val = evaluate(x, op1, op2);\par
+            s.push(val);\par
+        \}\par
+    \}\par
+    val = s.pop();\par
+    cout << "\\nValue of expression is " << val;\par
+\}\par
+\par
+int evaluate(char x, int op1, int op2)                   //evaluate function\par
+\{\par
+    if (x == '+')                                        //If x='+' perform addition\par
+        return(op1 + op2);\par
+    if (x == '-')                                       //If x='-' perform subtraction\par
+        return(op1 - op2);\par
+    if (x == '*')                                      //If x= '' perform multiplication\par
+        return(op1 * op2);\par
+    if (x == '/')                                      //if x= '/' perform division\par
+        return(op1 / op2);\par
+    if (x == '%')                                      //if x= '%' perform mod\par
+        return(op1 % op2);\par
+\}\par
+}
+ 
